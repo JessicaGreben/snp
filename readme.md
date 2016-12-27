@@ -9,17 +9,17 @@ To get this application running locally:
 
     git clone git@github.com:JessGreben/snp.git
     
-2. build the docker container (assuming docker is installed)
+2.build the docker container (assuming docker is installed)
 
 From the snp dir:
 
     docker build -t snp .
     
-3. run the docker container
+3.run the docker container
 
     docker run -p 8080:8080 snp
     
-4. To view app:
+4.To view app:
 
 If using docker on OSX, you will need to use the IP of the docker-machine to view the running application.
 
