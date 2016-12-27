@@ -9,7 +9,7 @@ To get this application running locally:
 
     git clone git@github.com:JessGreben/snp.git
     
-2.build the docker container (assuming docker is installed)
+2.build the docker container (assuming docker is installed on your machine)
 
 From the snp dir:
 
