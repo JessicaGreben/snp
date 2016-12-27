@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block body %}
+    <form action="/initInvest/submit" method="post">
+        How much money are you about to spend?<br><br>
+        <input type="text" name="initInvest"><br><br>
+        <input type="submit" value="Save it instead!">
+    </form>
+{% endblock %}

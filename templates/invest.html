@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block body %}
+    <p> If you invest it instead of spend it, that ${{ initInvest }} could be worth <strong>${{ accumulatedInvest }}</strong>! <sup>*</sup>
+    </p> 
+    <a href="/">Back</a>
+    <hr>
+    <p><sup>*</sup> assumes 30 year investement at 7% return, compounded monthly</p>
+{% endblock %}
