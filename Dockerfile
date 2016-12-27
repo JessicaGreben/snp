@@ -11,10 +11,10 @@ RUN apt-get update && apt-get -y install \
 
 COPY . /tmp/
 
-RUN pip install -r /tmp/requirements.txt
+WORKDIR /tmp/app
+
+RUN pip install -r requirements.txt
 
 EXPOSE 8080
-
-WORKDIR /tmp/
 
 CMD ["python", "server.py"]
