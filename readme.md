@@ -15,7 +15,7 @@ From the snp dir:
 
     docker build -t snp .
     
-3.run the docker container
+3.run the docker container and expose port 8080
 
     docker run -p 8080:8080 snp
     
