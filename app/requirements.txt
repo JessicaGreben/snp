@@ -2,3 +2,4 @@ klein==0.2.3
 Twisted==14.0.2
 Jinja2==2.7.3
 Quandl==3.0.1
+psycopg2==2.6.2
