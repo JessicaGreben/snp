@@ -1,8 +1,15 @@
-from twisted.trial import unittest
+import pytest
+
+from mock import Mock
+
 from invest import Investment
 
-class InvestmentestCase(unittest.TestCase):
-    def test_calculateCompoundInterest(self):
-        invest = Investment()
-        investedValue = invest.calculateCompoundInterest(5)
-        self.assertEqual(investedValue, 40.58)
+
+@pytest.fixture
+def investment():
+	return Investment()
+
+def test_calculateCompoundInterest(investment):
+    investedValue = investment.calculateCompoundInterest(5)
+    assert 40.58 == investedValue
+
