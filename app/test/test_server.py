@@ -25,3 +25,8 @@ def test_initInvestSubmit(request):
 	with patch('server.invest'):
 		server.initInvestSubmit(request)
 		server.invest.assert_called_once_with(request,1)
+
+def test_learnToInvest(request):
+	""" Do I render the resource page?"""
+	ret = server.learnToInvest(request)
+	assert 'Learn more about investing' in ret
