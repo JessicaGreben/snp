@@ -1,5 +1,10 @@
 twistd.log
 twistd.pid
 *.pyc
-_trial_temp
 env
+
+# Unit test / coverage reports
+_trial_temp
+htmlcov/
+.coverage
+.cache/
