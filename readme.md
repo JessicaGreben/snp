@@ -33,6 +33,18 @@ An application about investing as an alternative to spending.
     
 ## Tests
 
-You can run tests from the snp/app/ directory:
+Run the unit tests from the snp/app/ directory with the following command:
 
-    trial test/
+    pytest test/
+ 
+For unit test coverage report to print to the terminal, run:
+
+    pytest --cov-report term-missing --cov .
+    
+For unit test coverage report to write to a html file, run:
+
+    pytest --cov-report html --cov .
+    
+You can view the coverage file in the browser by running the following from the snp/app/ directory:
+
+    open htmlcov/index.html
