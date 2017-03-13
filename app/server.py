@@ -3,15 +3,11 @@ import jinja2
 import quandl
 import psycopg2
 from klein import Klein
-import os
-import quandl
-import psycopg2
-from datetime import timedelta
+
 
 app = Klein()
 app.templates = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'))
 connection = psycopg2.connect(database='snp', user='Jessica', host='localhost')
-
 
 @app.route('/')
 def home(request):
