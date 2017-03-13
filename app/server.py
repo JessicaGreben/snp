@@ -29,7 +29,7 @@ def invest(request, init):
     page = app.templates.get_template('invest.html')
     return page.render(initInvest=init, accumulatedInvest=accum)
 
-@app.route('/initnvest/submit/', methods=['POST'])
+@app.route('/initInvest/submit/', methods=['POST'])
 def initInvestSubmit(request):
     """ get initial investment value from form """
     initInvest = int(request.args.get('initInvest')[0])
