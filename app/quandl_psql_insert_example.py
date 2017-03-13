@@ -8,11 +8,14 @@ SYMBOL = 'INDEX_GSPC'
 quandl.ApiConfig.api_key = os.environ.get('QUANDL_API_KEY')
 
 connection = psycopg2.connect(database='snp', user='ryan', host='localhost')
+
 cursor = connection.cursor()
+
 
 try:
     cursor.execute("SELECT MAX(date) FROM ohlcv WHERE symbol = %s", (SYMBOL,))
-    start_date, = cursor.fetchone()
+    start_date, = cursor.fetchone() # returns none if there are no records
+
     if start_date:
         start_date += timedelta(days=1)
 

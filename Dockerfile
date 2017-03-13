@@ -7,8 +7,14 @@ RUN apt-get update && apt-get -y install \
     netcat \
     python-dev \
     python-pip \
-    build-essential
-
+    build-essential \
+ 	libffi-dev \
+ 	libssl-dev \
+ 	libxml2-dev \
+ 	libxslt1-dev \
+ 	libjpeg8-dev \ 
+ 	zlib1g-dev
+ 	
 COPY . /tmp/
 
 WORKDIR /tmp/app
