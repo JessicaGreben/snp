@@ -3,7 +3,10 @@ import jinja2
 import quandl
 import psycopg2
 from klein import Klein
-
+import os
+import quandl
+import psycopg2
+from datetime import timedelta
 
 app = Klein()
 app.templates = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'))
