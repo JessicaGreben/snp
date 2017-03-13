@@ -1,10 +1,9 @@
 import os
 import jinja2
-from klein import Klein
-import os
 import quandl
 import psycopg2
-from datetime import timedelta
+from klein import Klein
+
 
 app = Klein()
 app.templates = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'))
@@ -27,7 +26,7 @@ def invest(request, init):
     page = app.templates.get_template('invest.html')
     return page.render(initInvest=init, accumulatedInvest=accum)
 
-@app.route('/initInvest/submit/', methods=['POST'])
+@app.route('/initnvest/submit/', methods=['POST'])
 def initInvestSubmit(request):
     """ get initial investment value from form """
     initInvest = int(request.args.get('initInvest')[0])
@@ -39,31 +38,16 @@ def learnToInvest(request):
     page = app.templates.get_template('resources.html')
     return page.render()
 
-@app.route('/api/v1/getohlvc', methods=['POST'])
-def getOhlvc(request):
-    """ get all recent daily stock data """
-    # when do we do this? on page load? missing method to send the symbol
-    # should just return stock data
+@app.route('/api/v1/saveohlvc', methods=['POST'])
+def saveOhlvc(request):
+    """ get and save all recent daily stock data for a symbol """
+    import db
+
     symbol = request.args.get('symbol')[0]
-    cursor = connection.cursor()
-
-    try:
-        cursor.execute("SELECT MAX(date) FROM ohlcv WHERE symbol = %s", (symbol,))
-        start_date, = cursor.fetchone() # returns none if there are no records
-
-        if start_date:
-            start_date += timedelta(days=1)
-
-        data = quandl.get("YAHOO/{}".format(symbol), start_date=start_date)
-
-        for record in data.itertuples():
-            cursor.execute(
-                "INSERT INTO ohlcv (symbol, date, open, high, low, close, volume) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                (symbol, record[0], record[1], record[2], record[3], record[4], record[5]),
-            )
-        connection.commit()
-    finally:
-        cursor.close()
+    start_date = db.get_start_date(connection, symbol)
+    data = quandl.get("YAHOO/{}".format(symbol), start_date=start_date)
+    db.save_stock_data(data, connection, symbol)
+    return
 
 
 if __name__ == "__main__":
