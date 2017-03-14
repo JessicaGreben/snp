@@ -1,13 +1,15 @@
 import os
+
 import jinja2
 import quandl
-import psycopg2
 from klein import Klein
+
+import db
 
 
 app = Klein()
 app.templates = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'))
-connection = psycopg2.connect(database='snp', user='Jessica', host='localhost')
+
 
 @app.route('/')
 def home(request):
@@ -40,13 +42,11 @@ def learnToInvest(request):
 @app.route('/api/v1/saveohlvc', methods=['POST'])
 def saveOhlvc(request):
     """ get and save all recent daily stock data for a symbol """
-    import db
-
     symbol = request.args.get('symbol')[0]
-    start_date = db.get_start_date(connection, symbol)
-    data = quandl.get("YAHOO/{}".format(symbol), start_date=start_date)
-    db.save_stock_data(data, connection, symbol)
-    return
+    start_date = db.get_start_date(symbol)
+    ohlvc_data = quandl.get("YAHOO/{}".format(symbol), start_date=start_date)
+    db.save_stock_data(ohlvc_data, symbol)
+    return 'ok'
 
 
 if __name__ == "__main__":
