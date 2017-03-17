@@ -4,14 +4,19 @@ from datetime import timedelta
 import psycopg2
 
 
-def connect(db, user, host):
+def connect():
     """ connect to the database """
-    if os.environ.get('test'):
+    if os.environ.get('ENV_MODE') == 'test':
         db = 'testsnp'
+    else:
+        db = 'snp'
 
-    return psycopg2.connect(database=db, user=user, host=host)
+    return psycopg2.connect(database=db,
+        user=os.environ.get('DB_USER'),
+        host=os.environ.get('DB_HOST'),
+        port=os.environ.get('DB_PORT'))
 
-conn = connect('snp', 'Jessica', 'localhost')
+conn = connect()
 
 def get_start_date(symbol):
     """ get the most recent date that we have daily stock data """
@@ -37,6 +42,6 @@ def save_stock_data(data, symbol):
 
 def drop_ohlcv_table():
     """ drop ohlcv data but only when using the test database """
-    assert os.environ.get('test'), 'Not using test database, but trying to drop the ohlvc table'
+    assert os.environ.get('ENV_MODE') == 'test', 'Not using test database, but trying to drop the ohlvc table'
     with conn.cursor() as cursor:
         cursor.execute("DELETE FROM ohlcv")

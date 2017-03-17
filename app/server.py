@@ -51,4 +51,5 @@ def saveOhlvc(request):
 
 if __name__ == "__main__":
     quandl.ApiConfig.api_key = os.environ.get('QUANDL_API_KEY')
+    os.environ['ENV_MODE'] = 'prod'
     app.run('127.0.0.1', 8080)

@@ -3,3 +3,8 @@ twistd.pid
 *.pyc
 _trial_temp
 env
+
+
+# Unit tests
+.cache
+.coverage
