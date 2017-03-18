@@ -3,6 +3,7 @@ from mock import Mock, MagicMock, patch
 import pytest
 
 import server
+import db
 
 
 @pytest.fixture
@@ -30,3 +31,11 @@ def test_learnToInvest(request):
 	""" Do I render the resource page?"""
 	ret = server.learnToInvest(request)
 	assert 'Learn more about investing' in ret
+
+def test_saveOhlvc(request):
+	""" Do I get start date and save the stock data? """
+	with patch('db.save_stock_data'), patch('db.get_start_date'), patch('quandl.get'):
+		ret = server.saveOhlvc(request)
+		db.save_stock_data.assert_called_once()
+		db.get_start_date.assert_called_once()
+		assert 'ok' in ret
