@@ -1,5 +1,5 @@
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime, date
 
 import psycopg2
 
@@ -16,7 +16,28 @@ def connect():
         host=os.environ.get('DB_HOST'),
         port=os.environ.get('DB_PORT'))
 
+
 conn = connect()
+
+
+def symbol_exists(symbol):
+    """ check if the symbol exists in the database """
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT exists (SELECT 1 FROM ohlcv WHERE symbol = %s LIMIT 1)", (symbol,))
+        symbol, = cursor.fetchone()
+        return symbol
+
+
+def get_recent_ohlvc(symbol):
+    """ get the last 10 days of data for a stock symbol """
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT * FROM ohlcv WHERE symbol = %s ORDER BY date DESC LIMIT 10", (symbol,))
+        recent_ohlvc_data = cursor.fetchall()
+        lastTenDaysData = []
+        for day in recent_ohlvc_data: 
+            lastTenDaysData.append([str(value) for value in day])
+        return lastTenDaysData
+    
 
 def get_start_date(symbol):
     """ get the most recent date that we have daily stock data """
@@ -40,8 +61,20 @@ def save_stock_data(data, symbol):
             )
         conn.commit()
 
+
 def drop_ohlcv_table():
     """ drop ohlcv data but only when using the test database """
     assert os.environ.get('ENV_MODE') == 'test', 'Not using test database, but trying to drop the ohlvc table'
     with conn.cursor() as cursor:
         cursor.execute("DELETE FROM ohlcv")
+
+
+def need_recent_data(symbol):
+    """ if we have data from today in the db we don't need more recent data"""
+    today = datetime.today()
+    day = date(today.year, today.month, today.day)
+    delta_days =  day - get_start_date(symbol)
+    if delta_days != 0: 
+        return True 
+    else:
+        return False

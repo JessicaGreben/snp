@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block body %}
+	<p>Provide a stock symbol to get the past 10 days of stock data</p>
+    <form action="/api/v1/saveohlvc/" method="post">
+        <input type="text" name="symbol"><br><br>
+        <input type="submit" value="Get daily stock data">
+    </form>
+
+	{% if ohlvc_data %}
+	<p>Daily Stock Data for {{ ohlvc_data[0][2] }}</p>
+	<table style="width:100%">
+	  <tr>
+	    <th>Date</th> 
+	    <th>Symbol</th>
+	    <th>Open</th>
+	    <th>High</th>
+	    <th>Low</th>
+	    <th>Close</th>
+	    <th>Volume</th>
+	  </tr>
+	  {% for data in ohlvc_data %}
+	  <tr>
+	    <td>{{ data[1] }}</td>
+	    <td>{{ data[2] }}</td>
+	    <td>{{ data[3] }}</td>
+	    <td>{{ data[4] }}</td>
+	    <td>{{ data[5] }}</td>
+	    <td>{{ data[6] }}</td>
+	    <td>{{ data[7] }}</td>
+	  </tr>
+	  {% endfor %}
+	</table>
+	{% endif %}
+{% endblock %}
