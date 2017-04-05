@@ -37,7 +37,7 @@ def get_recent_ohlvc(symbol):
         for day in recent_ohlvc_data: 
             lastTenDaysData.append([str(value) for value in day])
         return lastTenDaysData
-    
+
 
 def get_start_date(symbol):
     """ get the most recent date that we have daily stock data """
