@@ -49,3 +49,5 @@ def test_need_recent_data(seed_test_db):
 	""" Do I check if we already have recent data in the database? """
 	need = db.need_recent_data(SYMBOL)
 	assert True == need
+
+

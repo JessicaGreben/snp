@@ -1,6 +1,8 @@
 import os
 from datetime import timedelta, datetime, date
 
+import quandl
+from quandl.errors.quandl_error import NotFoundError
 import psycopg2
 
 
@@ -36,6 +38,9 @@ def get_recent_ohlvc(symbol):
         lastTenDaysData = []
         for day in recent_ohlvc_data: 
             lastTenDaysData.append([str(value) for value in day])
+        # FIXME should transform data here to something like:
+        # {'symbol': lastTenDaysData[0], 'open': lastTenDaysData[1]...etc}
+        # then update route and view where this is rendered
         return lastTenDaysData
 
 
@@ -71,10 +76,15 @@ def drop_ohlcv_table():
 
 def need_recent_data(symbol):
     """ if we have data from today in the db we don't need more recent data"""
-    today = datetime.today()
-    day = date(today.year, today.month, today.day)
-    delta_days =  day - get_start_date(symbol)
-    if delta_days != 0: 
-        return True 
-    else:
+    todays_date = datetime.today()
+    todays_day = date(todays_date.year, todays_date.month, todays_date.day)
+    delta_days =  todays_day - get_start_date(symbol)
+    return delta_days != 0
+
+
+def is_valid_symbol(symbol):
+    try:
+        quandl.get("YAHOO/{}".format(symbol), row=1)
+        return True
+    except NotFoundError:
         return False

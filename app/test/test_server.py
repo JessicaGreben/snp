@@ -51,29 +51,30 @@ def test_daily_stock_with_symbol(request):
 	assert 'Daily Stock Data for' in ret
 
 
-def test_get_ohlvc(request):
+def test_get_recent_ohlvc(request):
 	""" Do I return the recent stock data? """
-	pGetRecentOhlvc = patch.object(db, 'get_recent_ohlvc', return_value='stuff')
-	with pGetRecentOhlvc:
-		ret = server.get_ohlvc(request, 'INDEX_GSPC')
+	mock_get_recent_ohlvc = patch.object(db, 'get_recent_ohlvc', return_value='stuff')
+	with mock_get_recent_ohlvc:
+		ret = server.get_recent_ohlvc(request, 'INDEX_GSPC')
 		assert 'stuff' in ret
 
 
 def test_update_ohlvc(request):
 	""" Do I get start date and save the stock data? """
 	request.args = {'symbol': ['INDEX_GSPC']}
-	pNeedRecentData = patch.object(db, 'need_recent_data', return_value=True)
-	pSymbolExists = patch.object(db, 'symbol_exists', return_value=True)
-	with patch('db.save_stock_data'), patch('db.get_start_date'), patch('quandl.get'), pNeedRecentData, pSymbolExists:
+	mock_need_recent_data = patch.object(db, 'need_recent_data', return_value=True)
+	mock_symbol_valid = patch.object(db, 'is_valid_symbol', return_value=True)
+	with patch('db.save_stock_data'), patch('db.get_start_date'), patch('quandl.get'), mock_need_recent_data, mock_symbol_valid:
 		ret = server.update_ohlvc(request)
-		db.save_stock_data.assert_called_once()
 		db.get_start_date.assert_called_once()
-		request.redirect.assert_called_once_with('/dailystock/?symbol=INDEX_GSPC')
+		db.save_stock_data.assert_called_once()
+		request.redirect.assert_called_once_with('/dailystock/?symbol=INDEX_GSPC&error=')
 
 
-def test_update_ohlvc_no_symbol(request):
+def test_update_ohlvc_not_valid_symbol(request):
 	""" Do I get start date and save the stock data? """
-	pSymbolExists = patch.object(db, 'symbol_exists', return_value=False)
-	with pSymbolExists:
+	mock_symbol_valid = patch.object(db, 'is_valid_symbol', return_value=False)
+	with mock_symbol_valid:
+		request.args = {'symbol': ['INDEX_GSPC']}
 		ret = server.update_ohlvc(request)
-		assert "error" in ret
+		request.redirect.assert_called_once_with("/dailystock/?symbol=INDEX_GSPC&error={'error': 'symbol does not exist'}")
