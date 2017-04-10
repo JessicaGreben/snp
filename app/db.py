@@ -76,9 +76,8 @@ def drop_ohlcv_table():
 
 def need_recent_data(symbol):
     """ if we have data from today in the db we don't need more recent data"""
-    todays_date = datetime.today()
-    todays_day = date(todays_date.year, todays_date.month, todays_date.day)
-    delta_days =  todays_day - get_start_date(symbol)
+    today = date.today()
+    delta_days =  today - get_start_date(symbol)
     return delta_days != 0
 
 
