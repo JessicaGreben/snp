@@ -1,5 +1,5 @@
 import os
-from datetime import timedelta, datetime, date
+from datetime import timedelta, date
 
 import quandl
 from quandl.errors.quandl_error import NotFoundError
