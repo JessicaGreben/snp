@@ -11,28 +11,28 @@
     </form>
 
 	{% if ohlvc_data %}
-	<p>Daily Stock Data for {{ ohlvc_data[0][2] }}</p>
-	<table style="width:100%">
-	  <tr>
-	    <th>Date</th> 
-	    <th>Symbol</th>
-	    <th>Open</th>
-	    <th>High</th>
-	    <th>Low</th>
-	    <th>Close</th>
-	    <th>Volume</th>
-	  </tr>
-	  {% for data in ohlvc_data %}
-	  <tr>
-	    <td>{{ data[1] }}</td>
-	    <td>{{ data[2] }}</td>
-	    <td>{{ data[3] }}</td>
-	    <td>{{ data[4] }}</td>
-	    <td>{{ data[5] }}</td>
-	    <td>{{ data[6] }}</td>
-	    <td>{{ data[7] }}</td>
-	  </tr>
-	  {% endfor %}
-	</table>
-	{% endif %}
+	<div>
+		<p>Last Ten Days of Stock Data for {{ ohlvc_data[0]['symbol'] }}</p>
+		<table style="width:100%">
+		  <tr>
+		    <th>Date</th> 
+		    <th>Open</th>
+		    <th>High</th>
+		    <th>Low</th>
+		    <th>Close</th>
+		    <th>Volume</th>
+		  </tr>
+		  {% for day  in ohlvc_data %}
+		  <tr>
+		    <td>{{ day['date'] }}</td>
+		    <td>{{ day['open'] }}</td>
+		    <td>{{ day['high'] }}</td>
+		    <td>{{ day['low'] }}</td>
+		    <td>{{ day['close'] }}</td>
+		    <td>{{ day['volume'] }}</td>
+		  </tr>
+		  {% endfor %}
+		</table>
+		{% endif %}
 {% endblock %}
+	</div>
