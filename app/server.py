@@ -68,7 +68,9 @@ def update_ohlvc(request, error=''):
     symbol = request.args.get('symbol')[0]
     if db.is_valid_symbol(symbol):
         if db.need_recent_data(symbol):
-            start_date = db.get_recent_data_date(symbol) + timedelta(days=1)
+            start_date = db.get_recent_data_date(symbol)
+            if start_date:
+                start_date += timedelta(days=1)
             ohlvc_data = quandl.get("YAHOO/{}".format(symbol), start_date=start_date)
             db.save_stock_data(ohlvc_data, symbol)
     else:
