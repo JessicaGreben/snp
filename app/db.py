@@ -33,6 +33,7 @@ def connect():
     engine.connect()
     return engine
 
+
 @contextmanager
 def session_scope():
     """ generator for handling sessions for database interactions"""
@@ -63,7 +64,13 @@ class OHLCV(Base):
 def symbol_exists(symbol):
     """ check if the stock symbol exists in the database """
     with session_scope() as session:
-        return session.query(exists().where(OHLCV.symbol==symbol))[0]
+        return session.query(
+            exists()
+            .where(
+                OHLCV.symbol==symbol,
+            )
+        )[0][0]
+
 
 
 def get_recent_ohlvc(symbol):
@@ -103,7 +110,7 @@ def get_recent_data_date(symbol):
         ).filter_by(
             symbol=symbol,
         ).one_or_none()
-    return date
+        return date
 
 
 def save_stock_data(data, symbol):
@@ -134,17 +141,16 @@ def need_recent_data(symbol):
     weekday = today.isoweekday()
     recent_data_date = get_recent_data_date(symbol)
     if weekday == 6: # is today saturday?
-        last_data_day = today - timedelta(days=1)
+        last_business_day = today - timedelta(days=1)
     elif weekday == 7: # is today sunday?
-        last_data_day = today - timedelta(days=2)
+        last_business_day = today - timedelta(days=2)
     else:
-        last_data_day = today
+        last_business_day = today
 
     if recent_data_date:
-        delta_date = recent_data_date - last_data_day
+        return recent_data_date < last_business_day
     else:
-        delta_date = timedelta(0)
-    return delta_date != timedelta(0)
+        return True
 
 
 def is_valid_symbol(symbol):
