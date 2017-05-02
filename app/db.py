@@ -1,5 +1,5 @@
 import os
-from datetime import timedelta, date
+from datetime import timedelta, date, datetime
 from contextlib import contextmanager
 
 import quandl
@@ -23,13 +23,15 @@ def connect():
         db = 'snp'
 
     engine = create_engine("postgresql://{0}@{1}:5432/{2}".format(
-        os.environ.get('DB_USER'),
-        os.environ.get('DB_HOST'),
-        db))
+            os.environ.get('DB_USER'),
+            os.environ.get('DB_HOST'),
+            db,
+        )
+    )
     Session.configure(bind=engine)
     Base.metadata.create_all(engine)
     engine.connect()
-
+    return engine
 
 @contextmanager
 def session_scope():
@@ -60,19 +62,25 @@ class OHLCV(Base):
 
 def symbol_exists(symbol):
     """ check if the stock symbol exists in the database """
-    return session.query(exists().where(OHLCV.symbol==symbol))[0]
+    with session_scope() as session:
+        return session.query(exists().where(OHLCV.symbol==symbol))[0]
 
 
 def get_recent_ohlvc(symbol):
     """ get the last 10 days of data for a stock symbol """
-    lastTenDays = []
+    last_ten_days = []
     with session_scope() as session:
-        data = session.query(OHLCV). \
-            filter_by(symbol=symbol). \
-            order_by(OHLCV.date.desc()). \
-            limit(10)
+        result = session.query(
+            OHLCV,
+        ).filter_by(
+            symbol=symbol,
+        ).order_by(
+            OHLCV.date.desc(),
+        ).limit(
+            10,
+        )
 
-    for day in data:
+    for day in result:
         dayDict = dict(
             date=day.date,
             symbol=day.symbol,
@@ -80,22 +88,22 @@ def get_recent_ohlvc(symbol):
             high=day.high,
             low=day.low,
             close=day.close,
-            volume=day.volume
-            )
-        lastTenDays.append(dayDict)
+            volume=day.volume,
+        )
+        last_ten_days.append(dayDict)
 
-    return lastTenDays
+    return last_ten_days
 
 
 def get_recent_data_date(symbol):
     """ get the most recent date that we have daily stock data """
-    start_date = ''
     with session_scope() as session:
-        for date in session.query(func.max(OHLCV.date)). \
-                            filter_by(symbol=symbol):
-            if date[0]:
-                start_date = date[0]
-    return start_date
+        date, = session.query(
+            func.max(OHLCV.date),
+        ).filter_by(
+            symbol=symbol,
+        ).one_or_none()
+    return date
 
 
 def save_stock_data(data, symbol):
@@ -103,20 +111,21 @@ def save_stock_data(data, symbol):
     with session_scope() as session:
         for record in data.itertuples():
             session.add(OHLCV(symbol=symbol,
-                date=record[0],
-                open=record[1],
-                high=record[2],
-                low=record[3],
-                close=record[4],
-                volume=record[5]))
+                    date=record[0],
+                    open=record[1],
+                    high=record[2],
+                    low=record[3],
+                    close=record[4],
+                    volume=record[5],
+                )
+            )
         session.flush()
 
 
-def drop_ohlcv_table():
+def drop_ohlcv_table(engine):
     """ drop ohlcv data but only when using the test database """
     assert os.environ.get('ENV_MODE') == 'test', 'Not using test database, but trying to drop the ohlvc table'
-    with session_scope() as session:
-        OHLCV.__table__.drop()
+    OHLCV.__table__.drop(engine)
 
 
 def need_recent_data(symbol):
@@ -130,7 +139,11 @@ def need_recent_data(symbol):
         last_data_day = today - timedelta(days=2)
     else:
         last_data_day = today
-    delta_date = recent_data_date - last_data_day
+
+    if recent_data_date:
+        delta_date = recent_data_date - last_data_day
+    else:
+        delta_date = timedelta(0)
     return delta_date != timedelta(0)
 
 
