@@ -1,8 +1,8 @@
 language: python
 services:
   - postgresql
+install: "pip install -r ./app/requirements.txt"
 before_script:
   - psql -c 'create database testsnp;' -U postgres
-install: "pip install -r ./app/requirements.txt"
-before_script: cd app/
+  - cd app/
 script: pytest --cov-report term-missing --cov .
