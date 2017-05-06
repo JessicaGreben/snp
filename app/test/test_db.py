@@ -7,14 +7,6 @@ import db
 SYMBOL = 'INDEX_GSPC'
 
 
-def test_symbol_exists(seed_test_db):
-	""" Do I check for if a symbol is in the database? """
-	symbol = db.symbol_exists(SYMBOL)
-	assert True == symbol
-	no_symbol = db.symbol_exists('boo')
-	assert False == no_symbol
-
-
 def test_get_recent_data_date_no_existing_data(drop_ohlcv_table):
 	""" Do I return none as a start date when there is no existing data?  """
 	assert db.get_recent_data_date(SYMBOL) == None

@@ -61,18 +61,6 @@ class OHLCV(Base):
     volume = Column(String)
 
 
-def symbol_exists(symbol):
-    """ check if the stock symbol exists in the database """
-    with session_scope() as session:
-        return session.query(
-            exists()
-            .where(
-                OHLCV.symbol==symbol,
-            )
-        )[0][0]
-
-
-
 def get_recent_ohlvc(symbol):
     """ get the last 10 days of data for a stock symbol """
     last_ten_days = []
@@ -118,12 +106,12 @@ def save_stock_data(data, symbol):
     with session_scope() as session:
         for record in data.itertuples():
             session.add(OHLCV(symbol=symbol,
-                    date=record[0],
-                    open=record[1],
-                    high=record[2],
-                    low=record[3],
-                    close=record[4],
-                    volume=record[5],
+                              date=record[0],
+                              open=record[1],
+                              high=record[2],
+                              low=record[3],
+                              close=record[4],
+                              volume=record[5],
                 )
             )
         session.flush()
