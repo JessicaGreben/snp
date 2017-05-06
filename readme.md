@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/JessicaGreben/snp.svg?branch=master)](https://travis-ci.org/JessicaGreben/snp)
+[![Build Status](https://travis-ci.org/JessicaGreben/snp.svg?branch=master)](https://travis-ci.org/JessicaGreben/snp) [![Coverage Status](https://coveralls.io/repos/github/JessicaGreben/snp/badge.svg)](https://coveralls.io/github/JessicaGreben/snp)
 
 ## Synopsis
 An application about investing as an alternative to spending.  
