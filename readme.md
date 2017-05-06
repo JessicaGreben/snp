@@ -9,33 +9,45 @@ An application about investing as an alternative to spending.
 
 ### Old Fashion Way
 
-1. clone the repo
-
+Clone the repo:
+    
     git clone git@github.com:JessGreben/snp.git
   
-2. install the dependencies
+Install the dependencies:
 
     pip install -r snp/app/requirements.txt
     
-3. start the web server. From the snp/app/ dir run:
+Postgres expects these environment variable exist:
+
+    DB_HOST=localhost
+    DB_USER=<user>
+    
+Where `DB_USER` is the user name to connect as. Defaults to be the same as the operating system name of the user running the application. See [Postgres docs](https://www.postgresql.org/docs/9.3/static/libpq-connect.html) for more details if needed.
+
+You may need to start the [postgres database server](https://www.postgresql.org/docs/8.3/static/server-start.html):
+
+    pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
+
+Start the web server. From the `snp/app/` dir run:
 
     python server.py
     
-### Using Docker
+### Using Docker (assumes you already have docker installed)
     
-1. Pull down the docker container
+Pull down the docker container
     
     docker pull jessicagreben/snp
 
-2. Run the Docker container and expose port 8080
+Run the Docker container and expose port 8080
 
     docker run -p 8080:8080 jessicagreben/snp
     
-3. View app at 127.0.0.1:8080
+View app at 127.0.0.1:8080
+
     
 ## Tests
 
-Run the unit tests from the snp/app/ directory with the following command:
+Run the unit tests from `snp/app/` directory with the following command:
 
     pytest test/
  
