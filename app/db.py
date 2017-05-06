@@ -6,6 +6,7 @@ import quandl
 from quandl.errors.quandl_error import NotFoundError
 import psycopg2
 from sqlalchemy import create_engine, Column, Integer, String, Date
+from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import exists, func
 from sqlalchemy.orm import sessionmaker
@@ -28,6 +29,9 @@ def connect():
             db,
         )
     )
+    if not database_exists(engine.url):
+        create_database(engine.url)
+
     Session.configure(bind=engine)
     Base.metadata.create_all(engine)
     engine.connect()
