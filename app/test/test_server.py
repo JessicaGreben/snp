@@ -1,15 +1,9 @@
-from mock import Mock, MagicMock, patch
+from mock import Mock, patch
 
 import pytest
 
 import server
 import db
-
-
-@pytest.fixture
-def request():
-	request = MagicMock()
-	return request
 
 
 def test_home(request):
@@ -44,11 +38,11 @@ def test_daily_stock(request):
 	assert 'Daily Stock Data for' not in ret
 
 
-def test_daily_stock_with_symbol(request):
+def test_daily_stock_with_symbol(request, seed_test_db):
 	""" Do I render the daily stock page? """
 	request.args = {'symbol': ['INDEX_GSPC']}
 	ret = server.daily_stock(request)
-	assert 'Daily Stock Data for' in ret
+	assert 'Last Ten Days of Stock' in ret
 
 
 def test_get_recent_ohlvc(request):
@@ -64,9 +58,9 @@ def test_update_ohlvc(request):
 	request.args = {'symbol': ['INDEX_GSPC']}
 	mock_need_recent_data = patch.object(db, 'need_recent_data', return_value=True)
 	mock_symbol_valid = patch.object(db, 'is_valid_symbol', return_value=True)
-	with patch('db.save_stock_data'), patch('db.get_start_date'), patch('quandl.get'), mock_need_recent_data, mock_symbol_valid:
+	with patch('db.save_stock_data'), patch('db.get_recent_data_date'), patch('quandl.get'), mock_need_recent_data, mock_symbol_valid:
 		ret = server.update_ohlvc(request)
-		db.get_start_date.assert_called_once()
+		db.get_recent_data_date.assert_called_once()
 		db.save_stock_data.assert_called_once()
 		request.redirect.assert_called_once_with('/dailystock/?symbol=INDEX_GSPC&error=')
 

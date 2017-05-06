@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 import jinja2
 import quandl
@@ -67,7 +68,9 @@ def update_ohlvc(request, error=''):
     symbol = request.args.get('symbol')[0]
     if db.is_valid_symbol(symbol):
         if db.need_recent_data(symbol):
-            start_date = db.get_start_date(symbol)
+            start_date = db.get_recent_data_date(symbol)
+            if start_date:
+                start_date += timedelta(days=1)
             ohlvc_data = quandl.get("YAHOO/{}".format(symbol), start_date=start_date)
             db.save_stock_data(ohlvc_data, symbol)
     else:
@@ -78,4 +81,5 @@ def update_ohlvc(request, error=''):
 if __name__ == "__main__":
     quandl.ApiConfig.api_key = os.environ.get('QUANDL_API_KEY')
     os.environ['ENV_MODE'] = 'prod'
+    db.connect()
     app.run('127.0.0.1', 8080)
