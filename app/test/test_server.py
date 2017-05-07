@@ -4,6 +4,7 @@ import pytest
 
 import server
 import db
+from invest import Investment
 
 
 def test_home(request):
@@ -14,8 +15,9 @@ def test_home(request):
 
 def test_invest(request):
 	""" Do I render the invest page? """
-	ret = server.invest(request, 2)
-	assert '$2 could be worth <strong>$16.23' in ret
+	with patch.object(Investment, 'get_compound_interest', return_value={'rate': 'poo', 'return_value': 'more poo'}):
+		ret = server.invest(request, 2)
+	assert '$2 could be worth <strong>$more poo' in ret
 
 
 def test_initInvestSubmit(request):

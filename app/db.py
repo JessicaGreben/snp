@@ -151,3 +151,17 @@ def is_valid_symbol(symbol):
         return True
     except NotFoundError:
         return False
+
+
+def get_price(date, symbol):
+    with session_scope() as session:
+        if (date.isoweekday() == 6 or date.isoweekday() == 7):
+            date = date - timedelta(days=2)
+        result = session.query(
+            OHLCV.close,
+        ).filter_by(
+            symbol=symbol,
+            date=date,
+        )
+        return float(result[0][0])
+

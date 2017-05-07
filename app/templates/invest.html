@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% block body %}
-    <p> If you invest it instead of spend it, that ${{ initInvest }} could be worth <strong>${{ accumulatedInvest }}</strong>! <sup>*</sup>
+ <p> If you invest it instead of spend it, that ${{ initInvest }} could be worth <strong>${{ accumulatedInvest }}</strong>! <sup>*</sup>
     </p> 
     <a href="/">Back</a>
     <hr>
-    <p><sup>*</sup> assumes 30 year investement at 7% return, compounded monthly</p>
+    <p><sup>*</sup> Assumes 30 year investment, compounded annually, at a return rate of {{ rate }} which is calculated from the historical performance of the S&amp;P 500.</p>
 {% endblock %}

@@ -25,9 +25,9 @@ def invest(request, init):
     from invest import Investment
 
     investment = Investment()
-    accum = investment.calculateCompoundInterest(init)
+    accum = investment.get_compound_interest(init, symbol='INDEX_GSPC')
     page = app.templates.get_template('invest.html')
-    return page.render(initInvest=init, accumulatedInvest=accum)
+    return page.render(initInvest=init, accumulatedInvest=accum['return_value'], rate=accum['rate'])
 
 
 @app.route('/initInvest/submit/', methods=['POST'])
